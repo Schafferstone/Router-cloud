@@ -19,6 +19,10 @@
 		BC5EF5A31960129D0066CB63 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC5EF58B1960129D0066CB63 /* UIKit.framework */; };
 		BC5EF5AB1960129D0066CB63 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = BC5EF5A91960129D0066CB63 /* InfoPlist.strings */; };
 		BC5EF5AD1960129E0066CB63 /* Router_cloudTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BC5EF5AC1960129E0066CB63 /* Router_cloudTests.m */; };
+		BC5EF5BD1960143E0066CB63 /* PSGuidePageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BC5EF5BC1960143E0066CB63 /* PSGuidePageViewController.m */; };
+		BC5EF5C1196014760066CB63 /* PSHomePageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BC5EF5BF196014760066CB63 /* PSHomePageViewController.m */; };
+		BC5EF5C2196014760066CB63 /* PSHomePageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BC5EF5C0196014760066CB63 /* PSHomePageViewController.xib */; };
+		BC5EF5C5196017D70066CB63 /* PSTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = BC5EF5C4196017D70066CB63 /* PSTabBarController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +52,13 @@
 		BC5EF5A81960129D0066CB63 /* Router cloudTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Router cloudTests-Info.plist"; sourceTree = "<group>"; };
 		BC5EF5AA1960129D0066CB63 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		BC5EF5AC1960129E0066CB63 /* Router_cloudTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Router_cloudTests.m; sourceTree = "<group>"; };
+		BC5EF5BB1960143E0066CB63 /* PSGuidePageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSGuidePageViewController.h; sourceTree = "<group>"; };
+		BC5EF5BC1960143E0066CB63 /* PSGuidePageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSGuidePageViewController.m; sourceTree = "<group>"; };
+		BC5EF5BE196014760066CB63 /* PSHomePageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSHomePageViewController.h; sourceTree = "<group>"; };
+		BC5EF5BF196014760066CB63 /* PSHomePageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSHomePageViewController.m; sourceTree = "<group>"; };
+		BC5EF5C0196014760066CB63 /* PSHomePageViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PSHomePageViewController.xib; sourceTree = "<group>"; };
+		BC5EF5C3196017D70066CB63 /* PSTabBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSTabBarController.h; sourceTree = "<group>"; };
+		BC5EF5C4196017D70066CB63 /* PSTabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSTabBarController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +88,11 @@
 		BC5EF57B1960129D0066CB63 = {
 			isa = PBXGroup;
 			children = (
+				BC5EF5B6196013E10066CB63 /* CustomUI */,
+				BC5EF5B7196013E10066CB63 /* Modal */,
+				BC5EF5B8196013E10066CB63 /* Resources */,
+				BC5EF5B9196013E10066CB63 /* ThirdpartyLibraries */,
+				BC5EF5BA196013E10066CB63 /* ViewController */,
 				BC5EF58D1960129D0066CB63 /* Router cloud */,
 				BC5EF5A61960129D0066CB63 /* Router cloudTests */,
 				BC5EF5861960129D0066CB63 /* Frameworks */,
@@ -107,8 +123,6 @@
 		BC5EF58D1960129D0066CB63 /* Router cloud */ = {
 			isa = PBXGroup;
 			children = (
-				BC5EF5961960129D0066CB63 /* PSAppDelegate.h */,
-				BC5EF5971960129D0066CB63 /* PSAppDelegate.m */,
 				BC5EF5991960129D0066CB63 /* Images.xcassets */,
 				BC5EF58E1960129D0066CB63 /* Supporting Files */,
 			);
@@ -118,6 +132,8 @@
 		BC5EF58E1960129D0066CB63 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				BC5EF5961960129D0066CB63 /* PSAppDelegate.h */,
+				BC5EF5971960129D0066CB63 /* PSAppDelegate.m */,
 				BC5EF58F1960129D0066CB63 /* Router cloud-Info.plist */,
 				BC5EF5901960129D0066CB63 /* InfoPlist.strings */,
 				BC5EF5931960129D0066CB63 /* main.m */,
@@ -142,6 +158,48 @@
 				BC5EF5A91960129D0066CB63 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		BC5EF5B6196013E10066CB63 /* CustomUI */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = CustomUI;
+			sourceTree = "<group>";
+		};
+		BC5EF5B7196013E10066CB63 /* Modal */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Modal;
+			sourceTree = "<group>";
+		};
+		BC5EF5B8196013E10066CB63 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		BC5EF5B9196013E10066CB63 /* ThirdpartyLibraries */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ThirdpartyLibraries;
+			sourceTree = "<group>";
+		};
+		BC5EF5BA196013E10066CB63 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				BC5EF5BB1960143E0066CB63 /* PSGuidePageViewController.h */,
+				BC5EF5BC1960143E0066CB63 /* PSGuidePageViewController.m */,
+				BC5EF5BE196014760066CB63 /* PSHomePageViewController.h */,
+				BC5EF5BF196014760066CB63 /* PSHomePageViewController.m */,
+				BC5EF5C0196014760066CB63 /* PSHomePageViewController.xib */,
+				BC5EF5C3196017D70066CB63 /* PSTabBarController.h */,
+				BC5EF5C4196017D70066CB63 /* PSTabBarController.m */,
+			);
+			path = ViewController;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -222,6 +280,7 @@
 			files = (
 				BC5EF5921960129D0066CB63 /* InfoPlist.strings in Resources */,
 				BC5EF59A1960129D0066CB63 /* Images.xcassets in Resources */,
+				BC5EF5C2196014760066CB63 /* PSHomePageViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -240,7 +299,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC5EF5BD1960143E0066CB63 /* PSGuidePageViewController.m in Sources */,
+				BC5EF5C1196014760066CB63 /* PSHomePageViewController.m in Sources */,
 				BC5EF5941960129D0066CB63 /* main.m in Sources */,
+				BC5EF5C5196017D70066CB63 /* PSTabBarController.m in Sources */,
 				BC5EF5981960129D0066CB63 /* PSAppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
