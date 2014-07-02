@@ -9,23 +9,19 @@
 #import "PSTabBarController.h"
 
 @interface PSTabBarController ()
-
+{
+    NSArray *titleArray;
+    NSArray *imageArray;
+}
 @end
 
 @implementation PSTabBarController
-- (id)init
-{
-    self = [super init];
-    if (self) {
-        
-    }
-    return self;
-}
+
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
+    
 }
 
 
