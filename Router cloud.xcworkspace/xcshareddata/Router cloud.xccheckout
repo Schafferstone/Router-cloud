@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>DE929C5A-0D6F-4787-8158-10AD2EC76DD9</string>
+	<key>IDESourceControlProjectName</key>
+	<string>Router cloud</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>E66DA4F6-CF7E-4EF3-B46E-9D866A6CBD83</key>
+		<string>file:///Users/mac/Library/Caches/CocoaPods/GitHub/31660344774d9e8a06070f9208c41f360a163d31/</string>
+		<key>F76CD96D-0395-407A-BBB6-07FFF0439CB1</key>
+		<string>https://github.com/Schafferstone/Router-cloud.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Router cloud.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>E66DA4F6-CF7E-4EF3-B46E-9D866A6CBD83</key>
+		<string>../Pods/LEOWebDav</string>
+		<key>F76CD96D-0395-407A-BBB6-07FFF0439CB1</key>
+		<string>..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/Schafferstone/Router-cloud.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>F76CD96D-0395-407A-BBB6-07FFF0439CB1</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>E66DA4F6-CF7E-4EF3-B46E-9D866A6CBD83</string>
+			<key>IDESourceControlWCCName</key>
+			<string>LEOWebDav</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>F76CD96D-0395-407A-BBB6-07FFF0439CB1</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Router cloud</string>
+		</dict>
+	</array>
+</dict>
+</plist>

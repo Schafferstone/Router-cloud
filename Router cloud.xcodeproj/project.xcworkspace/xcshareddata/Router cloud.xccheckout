@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>1348C445-BB0E-470C-ADAE-92DCE6E5B55C</string>
+	<key>IDESourceControlProjectName</key>
+	<string>Router cloud</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>F76CD96D-0395-407A-BBB6-07FFF0439CB1</key>
+		<string>https://github.com/Schafferstone/Router-cloud.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Router cloud.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>F76CD96D-0395-407A-BBB6-07FFF0439CB1</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/Schafferstone/Router-cloud.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>F76CD96D-0395-407A-BBB6-07FFF0439CB1</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>F76CD96D-0395-407A-BBB6-07FFF0439CB1</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Router cloud</string>
+		</dict>
+	</array>
+</dict>
+</plist>

@@ -1,0 +1,5 @@
+#include "Pods-AQGridView.xcconfig"
+GCC_PREPROCESSOR_DEFINITIONS = COCOAPODS=1
+HEADER_SEARCH_PATHS = "${PODS_ROOT}/BuildHeaders" "${PODS_ROOT}/BuildHeaders/AQGridView" "${PODS_ROOT}/Headers" "${PODS_ROOT}/Headers/AQGridView" "${PODS_ROOT}/Headers/ASIHTTPRequest" "${PODS_ROOT}/Headers/GDataXML-HTML" "${PODS_ROOT}/Headers/MKNetworkKit" "${PODS_ROOT}/Headers/MKNetworkKit+RACExtensions" "${PODS_ROOT}/Headers/MKNetworkKit/Categories" "${PODS_ROOT}/Headers/Reachability" "${PODS_ROOT}/Headers/ReactiveCocoa" "${PODS_ROOT}/Headers/ReactiveCocoa/ReactiveCocoa" "${PODS_ROOT}/Headers/THProgressView"
+OTHER_LDFLAGS = -ObjC ${PODS_AQGRIDVIEW_OTHER_LDFLAGS}
+PODS_ROOT = ${SRCROOT}

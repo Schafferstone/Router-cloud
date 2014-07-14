@@ -1,0 +1,8 @@
+platform :ios,'7.0'
+pod 'MKNetworkKit+RACExtensions', '~> 0.2'
+pod 'ASIHTTPRequest', '~> 1.8.2'
+pod 'GDataXML-HTML'
+pod 'THProgressView', '~> 1.0'
+pod 'SDWebImage'
+pod 'FMDB', '~> 2.3'
+pod 'MBProgressHUD'
