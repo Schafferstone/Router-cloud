@@ -10,7 +10,6 @@
 
 @interface PSCloudVideoViewController ()<UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout,LEOWebDAVRequestDelegate>
 {
-    UICollectionView *_collectionView;
     NSMutableArray  *_cloudArray;
     NSMutableArray *_localArray;
 }
@@ -76,6 +75,7 @@
         titleLabel.textAlignment = NSTextAlignmentCenter;
         titleLabel.text = @"Cloud·视频";
         self.navigationItem.titleView = titleLabel;
+        
     }else{
         UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(110, 20, 100, 44)];
         titleLabel.textColor = [UIColor whiteColor];

@@ -14,3 +14,8 @@
     #import <UIKit/UIKit.h>
     #import <Foundation/Foundation.h>
 #endif
+typedef NS_ENUM(NSUInteger, AccessType)
+{
+    AccessTypeDirect,
+    AccessTypeIndirect
+};

@@ -9,7 +9,9 @@
 #import <UIKit/UIKit.h>
 #import "PSBaseViewController.h"
 #import "PSCloudFileManagerViewController.h"
+
 @interface PSCloudMusicViewController : PSCloudFileManagerViewController
 @property (nonatomic, copy) NSString *leftItemName;
-//+(instancetype)sharedCloudMusic;
+
++(instancetype)sharedCloudMusic;
 @end

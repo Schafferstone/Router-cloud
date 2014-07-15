@@ -11,7 +11,6 @@
 @interface PSCloudDocumentsViewController ()<UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout,LEOWebDAVRequestDelegate>
 
 {
-    UICollectionView *_collectionView;
     NSMutableArray  *_cloudArray;
     NSMutableArray *_localArray;
 }

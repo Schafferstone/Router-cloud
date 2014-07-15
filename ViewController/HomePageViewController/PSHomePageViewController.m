@@ -14,9 +14,12 @@
 #import <MKNetworkKit.h>
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <GDataXMLNode.h>
+
 @interface PSHomePageViewController ()<UIScrollViewDelegate,UIAlertViewDelegate>
 {
     UIScrollView *_adScrollView;
+    MKNetworkEngine *_engineAd;
+    MKNetworkEngine *_engineRouter;
 }
 @property (nonatomic) BOOL isAccessToCloud;
 @property (nonatomic, strong) NSString *totalStorage;
@@ -73,7 +76,7 @@
     [self drawLine];
     [self addButton];
 //    [self checkLineToRouter];
-    [self requestAdPicture];
+//    [self requestAdPicture];
 }
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -161,6 +164,7 @@ static int currentPage;
         case 201:
         {
             PSMusicViewController *musicViewController = [[PSMusicViewController alloc] initWithNibName:@"PSMusicViewController" bundle:nil];
+            musicViewController.accessType = AccessTypeDirect;
             [self.navigationController pushViewController:musicViewController animated:YES];
         }
             break;
@@ -190,10 +194,11 @@ static int currentPage;
 
 #pragma mark - 检查是否连接路由器
 - (void)checkLineToRouter{
-    MKNetworkEngine *engine = [[MKNetworkEngine alloc] initWithHostName:kRouterUrl customHeaderFields:nil];
+    _engineRouter = [[MKNetworkEngine alloc] initWithHostName:kRouterUrl customHeaderFields:nil];
     NSMutableDictionary *param = [NSMutableDictionary new];
     [param setValue:@"<getSysInfo><Storage></Storage></getSysInfo>" forKey:@"data"];
-    MKNetworkOperation *operation = [engine operationWithPath:@"cgi-bin/SysInfo" params:param httpMethod:@"POST"];
+    MKNetworkOperation *operation = [_engineRouter operationWithPath:@"cgi-bin/SysInfo" params:param httpMethod:@"POST"];
+    operation.freezable = YES;
     __block NSString *xmlStr = nil;
     [operation addCompletionHandler:^(MKNetworkOperation *completedOperation) {
         xmlStr =[[NSString alloc]initWithData:completedOperation.responseData encoding:NSUTF8StringEncoding];
@@ -203,7 +208,7 @@ static int currentPage;
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"" message:@"未能获取cloud信息" delegate:self cancelButtonTitle:@"直接进入" otherButtonTitles:@"重新连接", nil];
         [alertView show];
     }];
-    [engine enqueueOperation:operation];
+    [_engineRouter enqueueOperation:operation];
 }
 #pragma mark - 解析从could请求到XML信息
 - (void)parseXML:(NSString *)xml{
@@ -229,8 +234,9 @@ static int currentPage;
 }
 //从官网请求广告图片
 - (void)requestAdPicture{
-    MKNetworkEngine *engine = [[MKNetworkEngine alloc] initWithHostName:@"wcf.v3.huiyuanti.com:9216"];
-    MKNetworkOperation *operation = [engine operationWithPath:@"B2CApp/Product.svc/GetAdverts?code=appad000"];
+    _engineAd = [[MKNetworkEngine alloc] initWithHostName:@"wcf.v3.huiyuanti.com:9216"];
+    MKNetworkOperation *operation = [_engineAd operationWithPath:@"B2CApp/Product.svc/GetAdverts?code=appad000"];
+    operation.freezable = YES;
     [operation addCompletionHandler:^(MKNetworkOperation *completedOperation) {
         NSDictionary *jsonDic = [NSJSONSerialization JSONObjectWithData:completedOperation.responseData options:0 error:nil];
         NSArray *imageArray = jsonDic[@"Data"][0][@"Items"];
@@ -243,6 +249,7 @@ static int currentPage;
     } errorHandler:^(MKNetworkOperation *completedOperation, NSError *error) {
         
     }];
-    [engine enqueueOperation:operation];
+    [_engineAd enqueueOperation:operation];
 }
+
 @end

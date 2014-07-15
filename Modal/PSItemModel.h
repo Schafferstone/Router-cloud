@@ -33,6 +33,7 @@ typedef NS_ENUM(NSInteger, ContentType){
     ContentTypeOther
 };
 @interface PSItemModel : NSObject
+@property (nonatomic, strong) NSString *href;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSString *url;
 @property (nonatomic, strong) NSString *contentSize;

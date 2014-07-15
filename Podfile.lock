@@ -18,7 +18,6 @@ PODS:
   - FMDB/standard (2.3):
     - FMDB/common
   - GDataXML-HTML (1.1.0)
-  - MBProgressHUD (0.8)
   - MKNetworkKit (0.87):
     - Reachability (~> 3.1.0)
   - MKNetworkKit+RACExtensions (0.2):
@@ -36,26 +35,27 @@ PODS:
     - SDWebImage/Core
   - SDWebImage/Core (3.6)
   - THProgressView (1.0)
+  - ZoomInteractiveTransition (0.1.0)
 
 DEPENDENCIES:
   - ASIHTTPRequest (~> 1.8.2)
   - FMDB (~> 2.3)
   - GDataXML-HTML
-  - MBProgressHUD
   - MKNetworkKit+RACExtensions (~> 0.2)
   - SDWebImage
   - THProgressView (~> 1.0)
+  - ZoomInteractiveTransition
 
 SPEC CHECKSUMS:
   ASIHTTPRequest: 2c8335b49410c0e2ad42829c438e74d454b77590
   FMDB: 31ec26773c7f7b7890a6038235a1f2bbd933a7cb
   GDataXML-HTML: 3f6537789b55edbc4d83283566f9779abd9680bc
-  MBProgressHUD: c356980b0cd097f19acec959b49dca5eb8ec31be
   MKNetworkKit: 83e6296a8d42e98a71880424a889773654846d74
   MKNetworkKit+RACExtensions: baa56100a80213502583935342bcda28c7f5f1e8
   Reachability: 8e9635e3cb4f98e7f825e51147f677ecc694d0e7
   ReactiveCocoa: dca75777b9d18990c8714a3a6f2149f29b4d1462
   SDWebImage: c6989652c1cdf27cbdf3f56957e2030f825af5bc
   THProgressView: 083589a96d15ee94329a27cab1d1a79111722efa
+  ZoomInteractiveTransition: 46b35897c682d493ec519bea4677152d1825f689
 
 COCOAPODS: 0.33.1

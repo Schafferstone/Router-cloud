@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "970E0C393B8442FFB8E6A230"
-               BuildableName = "libPods-MBProgressHUD.a"
-               BlueprintName = "Pods-MBProgressHUD"
+               BlueprintIdentifier = "7E0DB437C66F48C5B21252B5"
+               BuildableName = "libPods-ZoomInteractiveTransition.a"
+               BlueprintName = "Pods-ZoomInteractiveTransition"
                ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

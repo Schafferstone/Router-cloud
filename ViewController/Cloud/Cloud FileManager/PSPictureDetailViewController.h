@@ -10,4 +10,5 @@
 
 @interface PSPictureDetailViewController : UIViewController
 @property (nonatomic, strong) UIImage *image;
+@property (nonatomic, strong) NSString *name;
 @end

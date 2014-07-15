@@ -14,9 +14,11 @@
 #import "LEOWebDAVItem.h"
 #import "PSItemModel.h"
 #import "PSClient.h"
+#import "MJRefresh.h"
 #import "PSFileGridCollectionViewCell.h"
 #import "PSFileListCollectionViewCell.h"
 #import <SDWebImage/UIImageView+WebCache.h>
+
 #define kPICTUREDIRECTORY @"picture"
 #define KMUSICDIRECTORY   @"music"
 #define kVIDEODIRECTORY   @"video"
@@ -34,6 +36,7 @@ typedef NS_ENUM(NSUInteger, ArragmentType)
 @interface PSCloudFileManagerViewController : PSBaseViewController
 {
     UISegmentedControl *_segmentedControl;
+    UICollectionView *_collectionView;
 //    NSMutableArray *_localArray;
 //    NSMutableArray *_cloudArray;
     UIView *_operationView;

@@ -11,14 +11,21 @@
 #import <AVFoundation/AVFoundation.h>
 @interface PSCloudMusicViewController ()<UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout,LEOWebDAVRequestDelegate>
 {
-    UICollectionView *_collectionView;
     NSMutableArray *_cloudArray;
     NSMutableArray *_localArray;
 }
 @end
 
 @implementation PSCloudMusicViewController
-
++ (instancetype)sharedCloudMusic
+{
+    static PSCloudMusicViewController *sharedCloudMusic = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedCloudMusic = [[PSCloudMusicViewController alloc] init];
+    });
+    return sharedCloudMusic;
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -34,9 +41,9 @@
     [_collectionView registerClass:[PSFileListCollectionViewCell class] forCellWithReuseIdentifier:FileListCellIdentifier];
     [_collectionView registerClass:[PSFileGridCollectionViewCell class] forCellWithReuseIdentifier:FileGridCellIdentifier];
     _cloudArray = [NSMutableArray new];
-    _localArray = [NSMutableArray arrayWithArray:self.localArray];
+    _localArray = [NSMutableArray array];
     self.localArray = nil;
-    [self requestDataFromRouter];
+    [self requestDataFromLocal];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -68,14 +75,18 @@
     self.navigationItem.leftBarButtonItem.tintColor = [UIColor whiteColor];
     self.navigationItem.rightBarButtonItem.tintColor = [UIColor whiteColor];
 }
+//bool isfirstAdd;
 - (void)valueChange:(UISegmentedControl *)segmentedControl
 {
     if (segmentedControl.selectedSegmentIndex == 0) {
         UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(110, 20, 100, 44)];
         titleLabel.textColor = [UIColor whiteColor];
         titleLabel.textAlignment = NSTextAlignmentCenter;
-        titleLabel.text = @"本地·音乐";
+        titleLabel.text = @"Cloud·音乐";
+
         self.navigationItem.titleView = titleLabel;
+        [self addHeaderRefresh];
+
     }else{
         UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(110, 20, 100, 44)];
         titleLabel.textColor = [UIColor whiteColor];
@@ -89,79 +100,203 @@
 {
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
+static int count;
+static int requestCount;
+#pragma mark - 添加上拉刷新
+- (void)addHeaderRefresh
+{
+    __unsafe_unretained PSCloudMusicViewController *vc = self;
+    [_collectionView addHeaderWithCallback:^{
+        count = 0;
+        requestCount = 0;
+        [vc requestDataFromRouter];
+    }];
+    [_collectionView headerBeginRefreshing];
+}
+#pragma mark - 从本地读取图片
+- (void)requestDataFromLocal
+{
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSString *filePath = [NSString stringWithFormat:@"%@/%@",[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0],KMUSICDIRECTORY];
+    NSArray *fileArray = [fileManager subpathsOfDirectoryAtPath:filePath error:nil];
+    if (fileArray.count != 0) {
+        for (NSString *filename in fileArray) {
+            PSItemModel *item = [PSItemModel new];
+            item.name = filename;
+            if (![item.name hasSuffix:@"DS_Store"]) {
+                [_localArray addObject:item];
+            }
+        }
+    }
+    [_collectionView reloadData];
+}
 #pragma mark - 从cloud里读取图片
 - (void)requestDataFromRouter
 {
     LEOWebDAVClient *client = [PSClient sharedClient];
-    
-    LEOWebDAVPropertyRequest *request = [[LEOWebDAVPropertyRequest alloc] initWithPath:@"/"];
-    request.delegate = self;
-    [client enqueueRequest:request];
+    if (_cloudArray.count != 0) {
+        for (int i=0; i<_cloudArray.count; i++) {
+            PSItemModel *item = [_cloudArray objectAtIndex:i];
+            LEOWebDAVPropertyRequest *request = [[LEOWebDAVPropertyRequest alloc] initWithPath:item.href];
+            request.delegate = self;
+            [client enqueueRequest:request];
+        }
+    }else{
+        LEOWebDAVPropertyRequest *request = [[LEOWebDAVPropertyRequest alloc] initWithPath:@"/"];
+        request.delegate = self;
+        [client enqueueRequest:request];
+    }
 }
 #pragma mark - LEOWebDAVRequestDelegate
-bool isFirst;
+bool isFirstRequest;
 - (void)request:(LEOWebDAVRequest *)request didFailWithError:(NSError *)error
 {
-    if (!isFirst) {
+    if (!isFirstRequest) {
         NSLog(@"error:%@",[error description]);
         UIAlertView *alert=[[UIAlertView alloc]initWithTitle:@"提示" message:@"获取磁盘信息失败" delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
         [alert show];
-        isFirst = YES;
+        isFirstRequest = YES;
     }
 }
+
+
+static bool flag;
+//每次请求2个内容，然后刷新后继续请求
 - (void)request:(LEOWebDAVRequest *)request didSucceedWithResult:(id)result
 {
-    isFirst = YES;
+    isFirstRequest = YES;
     if ([request isKindOfClass:[LEOWebDAVPropertyRequest class]]) {
         for (LEOWebDAVItem *item in result) {
-            if (item.type == LEOWebDAVItemTypeCollection) {
-                LEOWebDAVPropertyRequest *newReuqest = [[LEOWebDAVPropertyRequest alloc] initWithPath:item.href];
-                newReuqest.delegate = self;
-                [[PSClient sharedClient] enqueueRequest:newReuqest];
-            }else{
-                if ([item.displayName rangeOfString:@"mp3"].length>0) {
-                    PSItemModel *itemModel = [PSItemModel new];
-                    itemModel.name = item.displayName;
-                    itemModel.url = item.url;
-                    itemModel.contentSize = item.contentSize;
-                    itemModel.contentType = ContentTypeMP3;
-                    itemModel.creationDate = item.creationDate;
-                    itemModel.modifiedDate = item.modifiedDate;
-                    [_cloudArray addObject:itemModel];
-                }else if ([item.displayName rangeOfString:@"ogg"].length > 0){
-                    PSItemModel *itemModel = [PSItemModel new];
-                    itemModel.name = item.displayName;
-                    itemModel.url = item.url;
-                    itemModel.contentSize = item.contentSize;
-                    itemModel.contentType = ContentTypeOGG;
-                    itemModel.creationDate = item.creationDate;
-                    itemModel.modifiedDate = item.modifiedDate;
-                    [_cloudArray addObject:itemModel];
-                }else if ([item.contentType rangeOfString:@"aac"].length > 0){
-                    PSItemModel *itemModel = [PSItemModel new];
-                    itemModel.name = item.displayName;
-                    itemModel.url = item.url;
-                    itemModel.contentSize = item.contentSize;
-                    itemModel.contentType = ContentTypeAAC;
-                    itemModel.creationDate = item.creationDate;
-                    itemModel.modifiedDate = item.modifiedDate;
-                    [_cloudArray addObject:itemModel];
-                }else if ([item.contentType rangeOfString:@"wma"].length > 0){
-                    PSItemModel *itemModel = [PSItemModel new];
-                    itemModel.name = item.displayName;
-                    itemModel.url = item.url;
-                    itemModel.contentSize = item.contentSize;
-                    itemModel.contentType = ContentTypeWMA;
-                    itemModel.creationDate = item.creationDate;
-                    itemModel.modifiedDate = item.modifiedDate;
-                    [_cloudArray addObject:itemModel];
+            
+             //判断—－请求的数据是否已经请求过了，存在cloudArray里
+            if (_cloudArray.count!= 0) {
+                for (PSItemModel *itemModel in _cloudArray) {
+                    if ([item.displayName isEqualToString:itemModel.name]) {
+                        flag = YES;
+                        break;
+                    }
                 }
+                if (flag) {
+                    continue;
+                }else{
+                    //  如果没有请求过，并且是个目录，发起二次请求
+                    if (item.type == LEOWebDAVItemTypeCollection) {
+                        if (count<2) {
+                            LEOWebDAVPropertyRequest *newReuqest = [[LEOWebDAVPropertyRequest alloc] initWithPath:item.href];
+                            newReuqest.delegate = self;
+                            [[PSClient sharedClient] enqueueRequest:newReuqest];
+                            count++;
+                        }
+                    }else{
+                        if ([item.displayName rangeOfString:@"mp3"].length>0) {
+                            PSItemModel *itemModel = [PSItemModel new];
+                            itemModel.href = item.href;
+                            itemModel.name = item.displayName;
+                            itemModel.url = item.url;
+                            itemModel.contentSize = item.contentSize;
+                            itemModel.contentType = ContentTypeMP3;
+                            itemModel.creationDate = item.creationDate;
+                            itemModel.modifiedDate = item.modifiedDate;
+                            [_cloudArray addObject:itemModel];
+                        }else if ([item.displayName rangeOfString:@"ogg"].length > 0){
+                            PSItemModel *itemModel = [PSItemModel new];
+                            itemModel.href = item.href;
+                            itemModel.name = item.displayName;
+                            itemModel.url = item.url;
+                            itemModel.contentSize = item.contentSize;
+                            itemModel.contentType = ContentTypeOGG;
+                            itemModel.creationDate = item.creationDate;
+                            itemModel.modifiedDate = item.modifiedDate;
+                            [_cloudArray addObject:itemModel];
+                        }else if ([item.contentType rangeOfString:@"aac"].length > 0){
+                            PSItemModel *itemModel = [PSItemModel new];
+                            itemModel.href = item.href;
+                            itemModel.name = item.displayName;
+                            itemModel.url = item.url;
+                            itemModel.contentSize = item.contentSize;
+                            itemModel.contentType = ContentTypeAAC;
+                            itemModel.creationDate = item.creationDate;
+                            itemModel.modifiedDate = item.modifiedDate;
+                            [_cloudArray addObject:itemModel];
+                        }else if ([item.contentType rangeOfString:@"wma"].length > 0){
+                            PSItemModel *itemModel = [PSItemModel new];
+                            itemModel.href = item.href;
+                            itemModel.name = item.displayName;
+                            itemModel.url = item.url;
+                            itemModel.contentSize = item.contentSize;
+                            itemModel.contentType = ContentTypeWMA;
+                            itemModel.creationDate = item.creationDate;
+                            itemModel.modifiedDate = item.modifiedDate;
+                            [_cloudArray addObject:itemModel];
+                        }
+                    }
+                }
+            }else{
+                //第一次请求的数据从这条路保存
+                if (item.type == LEOWebDAVItemTypeCollection) {
+                    if (count<2) {
+                        LEOWebDAVPropertyRequest *newReuqest = [[LEOWebDAVPropertyRequest alloc] initWithPath:item.href];
+                        newReuqest.delegate = self;
+                        [[PSClient sharedClient] enqueueRequest:newReuqest];
+                        count++;
+                    }
+                }else{
+                    if ([item.displayName rangeOfString:@"mp3"].length>0) {
+                        PSItemModel *itemModel = [PSItemModel new];
+                        itemModel.href = item.href;
+                        itemModel.name = item.displayName;
+                        itemModel.url = item.url;
+                        itemModel.contentSize = item.contentSize;
+                        itemModel.contentType = ContentTypeMP3;
+                        itemModel.creationDate = item.creationDate;
+                        itemModel.modifiedDate = item.modifiedDate;
+                        [_cloudArray addObject:itemModel];
+                    }else if ([item.displayName rangeOfString:@"ogg"].length > 0){
+                        PSItemModel *itemModel = [PSItemModel new];
+                        itemModel.href = item.href;
+                        itemModel.name = item.displayName;
+                        itemModel.url = item.url;
+                        itemModel.contentSize = item.contentSize;
+                        itemModel.contentType = ContentTypeOGG;
+                        itemModel.creationDate = item.creationDate;
+                        itemModel.modifiedDate = item.modifiedDate;
+                        [_cloudArray addObject:itemModel];
+                    }else if ([item.contentType rangeOfString:@"aac"].length > 0){
+                        PSItemModel *itemModel = [PSItemModel new];
+                        itemModel.href = item.href;
+                        itemModel.name = item.displayName;
+                        itemModel.url = item.url;
+                        itemModel.contentSize = item.contentSize;
+                        itemModel.contentType = ContentTypeAAC;
+                        itemModel.creationDate = item.creationDate;
+                        itemModel.modifiedDate = item.modifiedDate;
+                        [_cloudArray addObject:itemModel];
+                    }else if ([item.contentType rangeOfString:@"wma"].length > 0){
+                        PSItemModel *itemModel = [PSItemModel new];
+                        itemModel.href = item.href;
+                        itemModel.name = item.displayName;
+                        itemModel.url = item.url;
+                        itemModel.contentSize = item.contentSize;
+                        itemModel.contentType = ContentTypeWMA;
+                        itemModel.creationDate = item.creationDate;
+                        itemModel.modifiedDate = item.modifiedDate;
+                        [_cloudArray addObject:itemModel];
+                    }
 
+                }
+                
             }
         }
         
         
         [_collectionView reloadData];
+        if ([[PSClient sharedClient] currentArray].count==1) {
+            requestCount++;
+        }
+        if ([[PSClient sharedClient] currentArray].count==requestCount) {
+            [_collectionView headerEndRefreshing];
+            requestCount++;
+        }
     }
 }
 
@@ -230,7 +365,28 @@ bool isFirst;
     }
     
 }
-
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    PSMusicViewController *musicPlayer = [PSMusicViewController sharedMusicPlayer];
+    if (_segmentedControl.selectedSegmentIndex==0) {
+        PSItemModel *item = [_cloudArray objectAtIndex:indexPath.row];
+        musicPlayer.player = nil;
+        musicPlayer.player = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL URLWithString:item.url] error:nil];
+        musicPlayer.songArray = _cloudArray;
+        musicPlayer.currentSong = indexPath.row;
+        [musicPlayer.player prepareToPlay];
+    }else{
+        PSItemModel *item = [_localArray objectAtIndex:indexPath.row];
+        musicPlayer.player = nil;
+        musicPlayer.player = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL fileURLWithPath:item.url] error:nil];
+        musicPlayer.songArray = _localArray;
+        musicPlayer.currentSong = indexPath.row;
+        [musicPlayer.player prepareToPlay];
+    }
+    musicPlayer.accessType = AccessTypeIndirect;
+    [self.navigationController pushViewController:musicPlayer animated:YES];
+    
+}
 
 - (UIImage *)imageFromURL:(NSString *)urlString
 {

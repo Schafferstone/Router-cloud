@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="4514" systemVersion="13D65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
     <dependencies>
+        <deployment defaultVersion="1536" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3746"/>
     </dependencies>
     <objects>
@@ -10,6 +11,7 @@
                 <outlet property="artistLabel" destination="67w-4q-nwA" id="4Rp-zM-koY"/>
                 <outlet property="currentTime" destination="TfT-gl-Fv2" id="aZP-ff-URe"/>
                 <outlet property="playTypeLabel" destination="bOd-wF-yo3" id="0Pz-g3-4O5"/>
+                <outlet property="playerButton" destination="itt-Nc-Wba" id="lIe-zB-eKu"/>
                 <outlet property="progressSlider" destination="vi0-Pu-BdV" id="jGK-kU-J84"/>
                 <outlet property="totalLabel" destination="hxa-Co-bQ4" id="0B4-sh-DHB"/>
                 <outlet property="view" destination="1" id="KiX-U6-pji"/>
@@ -75,21 +77,25 @@
                         <action selector="buttonClicked:" destination="-1" eventType="touchUpInside" id="IRn-8L-wy4"/>
                     </connections>
                 </button>
-                <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" id="vi0-Pu-BdV">
-                    <rect key="frame" x="-2" y="333" width="324" height="34"/>
+                <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" id="vi0-Pu-BdV">
+                    <rect key="frame" x="0.0" y="330" width="320" height="34"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <connections>
+                        <action selector="progressSlider:" destination="-1" eventType="valueChanged" id="wBo-SP-3Jp"/>
+                    </connections>
                 </slider>
                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0:00" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="TfT-gl-Fv2">
                     <rect key="frame" x="0.0" y="362" width="67" height="21"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <color key="textColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0:00" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="hxa-Co-bQ4">
                     <rect key="frame" x="256" y="362" width="64" height="21"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <color key="textColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="animation_1.png" id="ich-MP-qHK">
@@ -113,7 +119,7 @@
                 <button opaque="NO" tag="100" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="fai-pL-cAb">
                     <rect key="frame" x="14" y="233" width="40" height="40"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <state key="normal" image="play_random.png">
+                    <state key="normal" image="play_circle.png">
                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
                     <connections>
@@ -161,9 +167,9 @@
         <image name="down.png" width="55" height="55"/>
         <image name="music_back.png" width="270" height="381"/>
         <image name="play_above.png" width="55" height="55"/>
+        <image name="play_circle.png" width="55" height="55"/>
         <image name="play_current.png" width="55" height="55"/>
         <image name="play_next.png" width="55" height="55"/>
-        <image name="play_random.png" width="55" height="55"/>
         <image name="project.png" width="55" height="55"/>
         <image name="store_action.png" width="55" height="55"/>
     </resources>

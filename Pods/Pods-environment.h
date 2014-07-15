@@ -60,12 +60,6 @@
 #define COCOAPODS_VERSION_MINOR_GDataXML_HTML 1
 #define COCOAPODS_VERSION_PATCH_GDataXML_HTML 0
 
-// MBProgressHUD
-#define COCOAPODS_POD_AVAILABLE_MBProgressHUD
-#define COCOAPODS_VERSION_MAJOR_MBProgressHUD 0
-#define COCOAPODS_VERSION_MINOR_MBProgressHUD 8
-#define COCOAPODS_VERSION_PATCH_MBProgressHUD 0
-
 // MKNetworkKit
 #define COCOAPODS_POD_AVAILABLE_MKNetworkKit
 #define COCOAPODS_VERSION_MAJOR_MKNetworkKit 0
@@ -125,4 +119,10 @@
 #define COCOAPODS_VERSION_MAJOR_THProgressView 1
 #define COCOAPODS_VERSION_MINOR_THProgressView 0
 #define COCOAPODS_VERSION_PATCH_THProgressView 0
+
+// ZoomInteractiveTransition
+#define COCOAPODS_POD_AVAILABLE_ZoomInteractiveTransition
+#define COCOAPODS_VERSION_MAJOR_ZoomInteractiveTransition 0
+#define COCOAPODS_VERSION_MINOR_ZoomInteractiveTransition 1
+#define COCOAPODS_VERSION_PATCH_ZoomInteractiveTransition 0
 

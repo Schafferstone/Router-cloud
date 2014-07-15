@@ -8,14 +8,17 @@
 
 #import "PSCloudPictureViewController.h"
 
-
+#import <ZoomInteractiveTransition.h>
+#import <ZoomTransitionProtocol.h>
 #import "PSPictureDetailViewController.h"
 @interface PSCloudPictureViewController ()<UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout,LEOWebDAVRequestDelegate>
 {
-    UICollectionView *_collectionView;
     NSMutableArray *_cloudArray;
     NSMutableArray *_localArray;
 }
+@property (nonatomic, strong) ZoomInteractiveTransition *transition;
+@property (nonatomic, strong) NSIndexPath *selectedIndexPath;
+@property (nonatomic) BOOL isRefresh;
 @end
 
 @implementation PSCloudPictureViewController
@@ -35,9 +38,9 @@
     [_collectionView registerClass:[PSFileGridCollectionViewCell class] forCellWithReuseIdentifier:FileGridCellIdentifier];
     _cloudArray = [NSMutableArray new];
     _localArray = [[NSMutableArray alloc] initWithArray:self.localArray];
-    self.localArray = nil;
-    [self requestDataFromRouter];
-
+//    self.localArray = nil;
+//    [self requestDataFromRouter];
+    
     
 }
 - (void)viewWillAppear:(BOOL)animated
@@ -45,11 +48,18 @@
     [super viewWillAppear:animated];
     UIButton *button = (UIButton *)[_operationView viewWithTag:300];
     button.enabled = NO;
-    
+}
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    if (_segmentedControl!=nil) {
+        _segmentedControl.hidden = NO;
+    }
 }
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
+    _segmentedControl.hidden = YES;
     if (_arrangmentView.hidden==NO) {
         _arrangmentView.hidden = YES;
     }
@@ -66,6 +76,7 @@
     self.navigationItem.titleView = titleView;
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[[UIImage imageNamed:@"camera"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] style:UIBarButtonItemStylePlain target:self action:@selector(openCameraDevice)];
 }
+#pragma mark - SegmentControl event
 - (void)valueChange:(UISegmentedControl *)segmentedControl
 {
     if (segmentedControl.selectedSegmentIndex == 0) {
@@ -74,6 +85,7 @@
         titleLabel.textAlignment = NSTextAlignmentCenter;
         titleLabel.text = @"Cloud·图片";
         self.navigationItem.titleView = titleLabel;
+        [self addHeaderRefresh];
     }else{
         UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(110, 20, 100, 44)];
         titleLabel.textColor = [UIColor whiteColor];
@@ -87,78 +99,166 @@
 {
 
 }
-
+#pragma mark - 添加上拉刷新
+static int count;
+static int requestCount;
+- (void)addHeaderRefresh
+{
+    __unsafe_unretained PSCloudPictureViewController *vc = self;
+    [_collectionView addHeaderWithCallback:^{
+        count = 0;
+        requestCount = 0;
+        [vc requestDataFromRouter];
+    }];
+    [_collectionView headerBeginRefreshing];
+}
 #pragma mark - 从cloud里读取图片
 - (void)requestDataFromRouter
 {
     LEOWebDAVClient *client = [PSClient sharedClient];
-    
-    LEOWebDAVPropertyRequest *request = [[LEOWebDAVPropertyRequest alloc] initWithPath:@"/"];
-    request.delegate = self;
-    [client enqueueRequest:request];
+    if (_cloudArray.count != 0) {
+        for (int i=0; i<_cloudArray.count; i++) {
+            PSItemModel *item = [_cloudArray objectAtIndex:i];
+            LEOWebDAVPropertyRequest *request = [[LEOWebDAVPropertyRequest alloc] initWithPath:item.href];
+            request.delegate = self;
+            [client enqueueRequest:request];
+        }
+    }else{
+        LEOWebDAVPropertyRequest *request = [[LEOWebDAVPropertyRequest alloc] initWithPath:@"/"];
+        request.delegate = self;
+        [client enqueueRequest:request];
+    }
 }
+
 #pragma mark - LEOWebDAVRequestDelegate
-bool isFirst;
+bool isFirstRequest;
 - (void)request:(LEOWebDAVRequest *)request didFailWithError:(NSError *)error
 {
-    if (!isFirst) {
+    if (!isFirstRequest) {
         NSLog(@"error:%@",[error description]);
         UIAlertView *alert=[[UIAlertView alloc]initWithTitle:@"提示" message:@"获取磁盘信息失败" delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
         [alert show];
-        isFirst = YES;
+        isFirstRequest = YES;
     }
 }
-//static bool isSecond;
+
+static bool flag;
+//每次请求2个内容，然后刷新后继续请求
 - (void)request:(LEOWebDAVRequest *)request didSucceedWithResult:(id)result
 {
-    isFirst = YES;
+    isFirstRequest = YES;
     if ([request isKindOfClass:[LEOWebDAVPropertyRequest class]]) {
             for (LEOWebDAVItem *item in result) {
-                if (item.type == LEOWebDAVItemTypeCollection) {
-//                    if (!isSecond) {
-                        LEOWebDAVPropertyRequest *newReuqest = [[LEOWebDAVPropertyRequest alloc] initWithPath:item.href];
-                        newReuqest.delegate = self;
-                        [[PSClient sharedClient] enqueueRequest:newReuqest];
-//                        isSecond = YES;
-//                    }
-                }else{
-                    if ([item.displayName hasSuffix:@"jpg"] || [item.displayName hasSuffix:@"JPG"]) {
-                        PSItemModel *itemModel = [PSItemModel new];
-                        itemModel.name = item.displayName;
-                        itemModel.url = item.url;
-                        itemModel.contentSize = item.contentSize;
-                        itemModel.contentType = ContentTypeJPG;
-                        itemModel.creationDate = item.creationDate;
-                        itemModel.modifiedDate = item.modifiedDate;
-                        [_cloudArray addObject:itemModel];
-                    }else if ([item.displayName hasSuffix:@"png"] || [item.displayName hasSuffix:@"PNG"]){
-                        PSItemModel *itemModel = [PSItemModel new];
-                        itemModel.name = item.displayName;
-                        itemModel.url = item.url;
-                        itemModel.contentSize = item.contentSize;
-                        itemModel.contentType = ContentTypePNG;
-                        itemModel.creationDate = item.creationDate;
-                        itemModel.modifiedDate = item.modifiedDate;
-                        [_cloudArray addObject:itemModel];
-                    }else if ([item.displayName hasSuffix:@"gif"] || [item.displayName hasSuffix:@"GIF"]){
-                        PSItemModel *itemModel = [PSItemModel new];
-                        itemModel.name = item.displayName;
-                        itemModel.url = item.url;
-                        itemModel.contentSize = item.contentSize;
-                        itemModel.contentType = ContentTypeGIF;
-                        itemModel.creationDate = item.creationDate;
-                        itemModel.modifiedDate = item.modifiedDate;
-                        [_cloudArray addObject:itemModel];
+                //判断—－请求的数据是否已经请求过了，存在cloudArray里
+                if (_cloudArray.count!= 0) {
+                    for (PSItemModel *itemModel in _cloudArray) {
+                        if ([item.displayName isEqualToString:itemModel.name]) {
+                            flag = YES;
+                            break;
+                        }
                     }
+                    if (flag) {
+                        continue;
+                    }else{
+                        //  如果没有请求过，并且是个目录，发起二次请求
+                        if (item.type == LEOWebDAVItemTypeCollection) {
+                            if (count<2) {
+                                LEOWebDAVPropertyRequest *newReuqest = [[LEOWebDAVPropertyRequest alloc] initWithPath:item.href];
+                                newReuqest.delegate = self;
+                                [[PSClient sharedClient] enqueueRequest:newReuqest];
+                                count++;
+                            }
+                        }else{
+                            if ([item.displayName hasSuffix:@"jpg"] || [item.displayName hasSuffix:@"JPG"]) {
+                                PSItemModel *itemModel = [PSItemModel new];
+                                itemModel.href = item.href;
+                                itemModel.name = item.displayName;
+                                itemModel.url = item.url;
+                                itemModel.contentSize = item.contentSize;
+                                itemModel.contentType = ContentTypeJPG;
+                                itemModel.creationDate = item.creationDate;
+                                itemModel.modifiedDate = item.modifiedDate;
+                                [_cloudArray addObject:itemModel];
+                            }else if ([item.displayName hasSuffix:@"png"] || [item.displayName hasSuffix:@"PNG"]){
+                                PSItemModel *itemModel = [PSItemModel new];
+                                itemModel.href = item.href;
+                                itemModel.name = item.displayName;
+                                itemModel.url = item.url;
+                                itemModel.contentSize = item.contentSize;
+                                itemModel.contentType = ContentTypePNG;
+                                itemModel.creationDate = item.creationDate;
+                                itemModel.modifiedDate = item.modifiedDate;
+                                [_cloudArray addObject:itemModel];
+                            }else if ([item.displayName hasSuffix:@"gif"] || [item.displayName hasSuffix:@"GIF"]){
+                                PSItemModel *itemModel = [PSItemModel new];
+                                itemModel.href = item.href;
+                                itemModel.name = item.displayName;
+                                itemModel.url = item.url;
+                                itemModel.contentSize = item.contentSize;
+                                itemModel.contentType = ContentTypeGIF;
+                                itemModel.creationDate = item.creationDate;
+                                itemModel.modifiedDate = item.modifiedDate;
+                                [_cloudArray addObject:itemModel];
+                            }
+                        }
+                    }
+                }else{
+                    //第一次请求的数据从这条路保存
+                    if (item.type == LEOWebDAVItemTypeCollection) {
+                        if (count<2) {
+                            LEOWebDAVPropertyRequest *newReuqest = [[LEOWebDAVPropertyRequest alloc] initWithPath:item.href];
+                            newReuqest.delegate = self;
+                            [[PSClient sharedClient] enqueueRequest:newReuqest];
+                            count++;
+                        }
+                    }else{
+                        if ([item.displayName hasSuffix:@"jpg"] || [item.displayName hasSuffix:@"JPG"]) {
+                            PSItemModel *itemModel = [PSItemModel new];
+                            itemModel.href = item.href;
+                            itemModel.name = item.displayName;
+                            itemModel.url = item.url;
+                            itemModel.contentSize = item.contentSize;
+                            itemModel.contentType = ContentTypeJPG;
+                            itemModel.creationDate = item.creationDate;
+                            itemModel.modifiedDate = item.modifiedDate;
+                            [_cloudArray addObject:itemModel];
+                        }else if ([item.displayName hasSuffix:@"png"] || [item.displayName hasSuffix:@"PNG"]){
+                            PSItemModel *itemModel = [PSItemModel new];
+                            itemModel.href = item.href;
+                            itemModel.name = item.displayName;
+                            itemModel.url = item.url;
+                            itemModel.contentSize = item.contentSize;
+                            itemModel.contentType = ContentTypePNG;
+                            itemModel.creationDate = item.creationDate;
+                            itemModel.modifiedDate = item.modifiedDate;
+                            [_cloudArray addObject:itemModel];
+                        }else if ([item.displayName hasSuffix:@"gif"] || [item.displayName hasSuffix:@"GIF"]){
+                            PSItemModel *itemModel = [PSItemModel new];
+                            itemModel.href = item.href;
+                            itemModel.name = item.displayName;
+                            itemModel.url = item.url;
+                            itemModel.contentSize = item.contentSize;
+                            itemModel.contentType = ContentTypeGIF;
+                            itemModel.creationDate = item.creationDate;
+                            itemModel.modifiedDate = item.modifiedDate;
+                            [_cloudArray addObject:itemModel];
+                        }
+                    }
+
                 }
+                
             }
-            
-        NSLog(@"%@",_cloudArray);
+
         [_collectionView reloadData];
+        if ([[PSClient sharedClient] currentArray].count==1) {
+            requestCount++;
+        }
+        if ([[PSClient sharedClient] currentArray].count==requestCount) {
+            [_collectionView headerEndRefreshing];
+            requestCount++;
+        }
     }
 }
-
-
 
 #pragma mark - CollectionViewDataSourceAndDelegate
 
@@ -231,6 +331,7 @@ bool isFirst;
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
+    self.selectedIndexPath = indexPath;
     PSPictureDetailViewController *pictureDetailViewController = [PSPictureDetailViewController new];
     pictureDetailViewController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     if (self.arrgmentType == ArragmentTypeList) {
@@ -240,8 +341,16 @@ bool isFirst;
         PSFileGridCollectionViewCell *cell = (PSFileGridCollectionViewCell *)[collectionView cellForItemAtIndexPath:indexPath];
         pictureDetailViewController.image = cell.fileImageView.image;
     }
-    [self presentViewController:pictureDetailViewController animated:YES completion:nil];
+    if (_segmentedControl.selectedSegmentIndex==0) {
+        PSItemModel *item = [_cloudArray objectAtIndex:indexPath.row];
+        pictureDetailViewController.name = item.name;
+    }else{
+        PSItemModel *item = [_localArray objectAtIndex:indexPath.row];
+        pictureDetailViewController.name = item.name;
+    }
+    [self.navigationController pushViewController:pictureDetailViewController animated:YES];
 }
+
 #pragma mark - buttonclicked
 - (void)fileButtonClicked:(UIButton *)button
 {
@@ -450,4 +559,5 @@ bool isFirst;
     NSDate *date = [formatter dateFromString:dateString];
     return date;
 }
+
 @end

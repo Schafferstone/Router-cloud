@@ -14,6 +14,7 @@
 #import "PSCloudFilesViewController.h"
 #import "PSCloudCollectionsViewController.h"
 #import "PSCloudVideoViewController.h"
+#import "PSMusicViewController.h"
 #import "PSClient.h"
 #import "LEOWebDAVItem.h"
 #import "PSItemModel.h"
@@ -88,6 +89,10 @@
 {
     [super viewWillAppear:animated];
     self.tabBarController.tabBar.hidden = YES;
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"nav_head.png"] forBarMetrics:UIBarMetricsDefault];
+    if ([PSMusicViewController sharedMusicPlayer]!= nil) {
+        [PSMusicViewController sharedMusicPlayer].player = nil;
+    }
 }
 
 #pragma mark - 添加下划线
@@ -158,7 +163,6 @@
         case 102:
         {
             PSCloudVideoViewController *videoViewController = [PSCloudVideoViewController new];
-            videoViewController.localArray = _localvideoArray;
             [self.navigationController pushViewController:videoViewController animated:YES];
         }
             break;
@@ -278,7 +282,7 @@
 - (void)requestDataFromLocal
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSArray *nameArray = @[kPICTUREDIRECTORY, KMUSICDIRECTORY, kVIDEODIRECTORY, kDOCUMENTDIRECTORY];
+    NSArray *nameArray = @[kPICTUREDIRECTORY, kVIDEODIRECTORY, kDOCUMENTDIRECTORY];
     for (int i=0; i<nameArray.count; i++) {
         NSString *filePath = [NSString stringWithFormat:@"%@/%@",[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0],nameArray[i]];
         NSArray *fileArray = [fileManager subpathsOfDirectoryAtPath:filePath error:nil];
@@ -292,18 +296,13 @@
                         break;
                     case 1:{
                         if (!([filename rangeOfString:@"DS_Store"].length>0)) {
-                            [_localmusicArray addObject:item];
-                        }
-                    }
-                        break;
-                    case 2:{
-                        if (!([filename rangeOfString:@"DS_Store"].length>0)) {
                             [_localvideoArray addObject:item];
                         }
                     }
                         break;
-                    case 3:
+                    case 2:{
                         [_localdocumentArray addObject:item];
+                    }
                         break;
                     default:
                         break;

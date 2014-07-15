@@ -34,8 +34,8 @@
     }
     [_webview loadRequest:[NSURLRequest requestWithURL:url]];
     [self.view addSubview:_webview];
-    _activityIndicator = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(140, 120, 60.0, 60.0)];
-    [_activityIndicator setCenter:self.view.center];
+    _activityIndicator = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(0, 0, 60.0, 60.0)];
+    [_activityIndicator setCenter:_webview.center];
     [_activityIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
     [self.view addSubview:_activityIndicator];
 }
